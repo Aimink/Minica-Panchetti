@@ -19,200 +19,108 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://minica-panchetti.fr/">
 
-body {
-  margin: 0;
-  background: #ffffff;
-  color: #111;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-/* HEADER */
-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 28px;
-  border-bottom: 1px solid #111;
-  font-size: 14px;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 0, 140, 0.18), transparent 35%),
+        radial-gradient(circle at 75% 65%, rgba(120, 80, 255, 0.18), transparent 35%),
+        #05050a;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.logo {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+    .page {
+      width: min(90%, 800px);
+      text-align: center;
+      padding: 40px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-nav a {
-  margin-left: 18px;
-  text-decoration: none;
-  color: #111;
-}
+    h1 {
+      margin: 0;
+      font-size: 2.4rem;
+      font-weight: 500;
+    }
 
-nav a:hover {
-  text-decoration: underline;
-}
+    h1 span {
+      color: #ff4fc3;
+      text-shadow: 0 0 18px rgba(255, 79, 195, 0.5);
+    }
 
-/* HERO */
-.hero {
-  padding: 60px 28px 50px;
-  border-bottom: 1px solid #111;
-}
+    p {
+      margin: 20px auto 0;
+      max-width: 500px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
 
-.hero h1 {
-  font-size: 42px;
-  font-weight: 500;
-  margin: 0 0 20px;
-}
+    .links {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-.hero p {
-  font-size: 18px;
-  max-width: 600px;
-}
+    a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.9rem;
+      transition: 0.25s;
+    }
 
-/* SECTIONS */
-.section {
-  border-bottom: 1px solid #111;
-}
+    a:hover {
+      background: #ff4fc3;
+      border-color: #ff4fc3;
+      box-shadow: 0 0 20px rgba(255, 79, 195, 0.5);
+    }
 
-h2 {
-  font-size: 14px;
-  text-transform: uppercase;
-  padding: 16px 28px;
-  margin: 0;
-  border-bottom: 1px solid #111;
-}
-
-/* ITEMS */
-.item {
-  padding: 22px 28px;
-  border-bottom: 1px solid #eee;
-}
-
-.item h3 {
-  font-size: 20px;
-  margin: 6px 0;
-  font-weight: 500;
-}
-
-.item p {
-  font-size: 15px;
-  max-width: 600px;
-  margin: 0;
-}
-
-.meta {
-  font-size: 12px;
-  color: #666;
-}
-
-/* LINKS */
-.links {
-  margin-top: 12px;
-}
-
-.links a {
-  display: inline-block;
-  margin-right: 12px;
-  font-size: 14px;
-  text-decoration: underline;
-  color: #111;
-}
-
-/* FOOTER */
-footer {
-  padding: 20px 28px;
-  font-size: 12px;
-  color: #666;
-}
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <header>
-    <a class="logo" href="#">Minica Panchetti</a>
+<div class="grain"></div>
 
-    <nav>
-      <a href="#projets">Projets</a>
-      <a href="#recherche">Recherche</a>
-      <a href="#enseignement">Enseignement</a>
-      <a href="#liens">Liens</a>
-    </nav>
-  </header>
+<main class="page">
 
-  <main>
+  <h1>Minica <span>Panchetti</span></h1>
 
-    <section class="hero">
-      <p class="label">Site personnel</p>
+  <p>
+    Enseignement & recherche-création en 3D, multimédia et dispositifs interactifs
+  </p>
 
-      <h1>Minica<br>Panchetti</h1>
+  <div class="links">
+    <a href="https://vrun.minica-panchetti.fr">VRun</a>
+    <a href="https://minicapanchetti.itch.io">itch.io</a>
+  </div>
 
-      <p class="intro">
-        Enseignement & recherche-création en 3D, multimédia et dispositifs interactifs.
-      </p>
-    </section>
-
-    <section id="projets" class="section">
-      <h2>Projets</h2>
-
-      <article class="item">
-        <p class="meta">En cours</p>
-        <h3>GAMME</h3>
-        <p>
-          Environnements immersifs, médiation sensorielle, design 3D et dispositifs numériques.
-        </p>
-      </article>
-
-      <article class="item">
-        <p class="meta">Création interactive</p>
-        <h3>VRUN</h3>
-        <p>
-          Dispositif visuel autour du geste, de la course, de la trace et de l’interaction.
-        </p>
-      </article>
-    </section>
-
-    <section id="recherche" class="section">
-      <h2>Recherche</h2>
-
-      <article class="item">
-        <p class="meta">Recherche-création</p>
-        <h3>3D, affordance, espaces sensibles</h3>
-        <p>
-          Travail autour des environnements immersifs, de la perception, de la médiation et des formes interactives.
-        </p>
-      </article>
-    </section>
-
-    <section id="enseignement" class="section">
-      <h2>Enseignement</h2>
-
-      <article class="item">
-        <p class="meta">MMI · IUT de Tarbes</p>
-        <h3>Multimédia & dispositifs interactifs</h3>
-        <p>
-          Développement web, création numérique, 3D, interaction, narration visuelle et pédagogie par projet.
-        </p>
-      </article>
-    </section>
-
-    <section id="liens" class="section">
-      <h2>Liens</h2>
-
-      <article class="item">
-        <p class="meta">Plateformes</p>
-        <h3>Projets en ligne</h3>
-
-        <div class="links">
-          <a href="https://vrun.minica-panchetti.fr">VRun</a>
-          <a href="https://minicapanchetti.itch.io">itch.io</a>
-        </div>
-      </article>
-    </section>
-
-  </main>
-
-  <footer>
-    © Minica Panchetti
-  </footer>
+</main>
 
 </body>
 </html>
