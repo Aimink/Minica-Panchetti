@@ -11,7 +11,6 @@
   <meta name="description" content="Site de Minica Panchetti : créations interactives, 3D, recherche-création, projets immersifs et dispositifs numériques.">
   <meta name="author" content="Minica Panchetti">
   <meta name="robots" content="index, follow">
-
   <link rel="canonical" href="https://minica-panchetti.fr/">
 
   <meta property="og:title" content="Minica Panchetti">
@@ -33,24 +32,20 @@
         #05050a;
       color: white;
       font-family: Arial, Helvetica, sans-serif;
+
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
     }
 
-    .page {
-      width: min(90%, 800px);
-      text-align: center;
-      padding: 40px;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    main {
+      padding: 20px;
     }
 
     h1 {
       margin: 0;
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 500;
     }
 
@@ -60,44 +55,44 @@
     }
 
     p {
-      margin: 20px auto 0;
+      margin: 18px auto 0;
       max-width: 500px;
       color: rgba(255, 255, 255, 0.75);
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       line-height: 1.5;
     }
 
     .links {
-      margin-top: 28px;
+      margin-top: 24px;
       display: flex;
       gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
     }
 
-    a {
+    .links a {
       color: white;
       text-decoration: none;
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.2);
       font-size: 0.9rem;
       transition: 0.25s;
     }
 
-    a:hover {
+    .links a:hover {
       background: #ff4fc3;
       border-color: #ff4fc3;
-      box-shadow: 0 0 20px rgba(255, 79, 195, 0.5);
     }
 
     .grain {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: 0.12;
-      background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      opacity: 0.1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
       background-size: 40px 40px;
     }
   </style>
@@ -107,8 +102,7 @@
 
 <div class="grain"></div>
 
-<main class="page">
-
+<main>
   <h1>Minica <span>Panchetti</span></h1>
 
   <p>
@@ -119,7 +113,6 @@
     <a href="https://vrun.minica-panchetti.fr">VRun</a>
     <a href="https://minicapanchetti.itch.io">itch.io</a>
   </div>
-
 </main>
 
 </body>
