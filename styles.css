@@ -170,6 +170,44 @@ a {
 .home .links a:hover::after {
   animation: underline 0.45s ease;
 }
+.footer-links {
+  margin-top: 72px;
+
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  padding: 12px 18px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  background: rgba(255,255,255,0.04);
+
+  backdrop-filter: blur(10px);
+
+  transition: 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: white;
+
+  border-color: rgba(255,43,189,0.7);
+
+  background: rgba(255,43,189,0.10);
+
+  transform: translateY(-2px);
+}
 
 /* =========================================================
    Pages galerie : characters.html / sketches.html
