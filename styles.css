@@ -239,8 +239,11 @@ a {
   gap: 120px;
 }
 
-.work {
-  width: 100%;
+  .work {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
 }
 
 .work-title {
@@ -256,7 +259,16 @@ a {
 }
 
 /* ---------- Textes sous médias ---------- */
-.description,
+.description{
+  .embed-caption {
+  max-width: 760px;
+  margin: 28px auto 0;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.65);
+
+}
+}
 .embed-caption {
   max-width: 760px;
   margin: 28px auto 0;
