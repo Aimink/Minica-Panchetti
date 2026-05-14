@@ -176,7 +176,7 @@
     }
 
     .image-grid img {
-
+      width: 100%;
       display: block;
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 18px;
@@ -189,7 +189,10 @@
       font-size: 0.85rem;
       letter-spacing: 0.08em;
     }
-
+.silhouette-img {
+  width: 70% !important;
+  margin: 0 auto;
+}
     @media (max-width: 700px) {
       main {
         padding: 100px 24px 64px;
@@ -263,9 +266,13 @@
             </figure>
 
             <figure>
-              <img src="./assets/Characters/Gerry/chara_turnaround_flip.png" alt="Turnaround du personnage Gerry">
+              <img class="silhouette-img" src="./assets/Characters/Gerry/chara_turnaround_flip.png" alt="Turnaround du personnage Gerry">
               <figcaption>Silhouettes</figcaption>
             </figure>
+ 
+
+
+
           </div>
         </section>
       </article>
