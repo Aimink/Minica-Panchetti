@@ -453,3 +453,44 @@ a {
     width: 70% !important;
   }
 }
+.back-to-top {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.14);
+
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+
+  font-size: 1.2rem;
+
+  backdrop-filter: blur(12px);
+
+  transition: 0.3s ease;
+
+  z-index: 999999;
+
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: #ff2bbd;
+
+  color: white;
+
+  transform: translateY(-2px);
+}
