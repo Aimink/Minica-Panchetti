@@ -84,6 +84,32 @@
       flex-direction: column;
       gap: 120px;
     }
+    .video-embed {
+      width: 88%;
+      max-width: 900px;
+
+      aspect-ratio: 1 / 1;
+
+      margin: 0 auto;
+
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+
+      overflow: hidden;
+
+      background: black;
+    }
+
+    .video-embed video {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+
+      background: black;
+    }
 
     .work {
       width: 100%;
@@ -198,7 +224,7 @@
     <h1>Characters</h1>
 
     <p class="subtitle">
-      Cette page rassemble des expérimentations autour du character design.
+      Cette page rassemble des expérimentations autour du charadesign.
     </p>
 
     <section class="gallery">
@@ -238,7 +264,7 @@
 
             <figure>
               <img src="./assets/Characters/Gerry/chara_turnaround_flip.png" alt="Turnaround du personnage Gerry">
-              <figcaption>Turnaround</figcaption>
+              <figcaption>Silhouettes</figcaption>
             </figure>
           </div>
         </section>
@@ -260,7 +286,7 @@
 
     <figure>
       <img src="./assets/Characters/Moustache/rayner-alencar-1576791623084-homen.jpg" alt="Référence de character design par Rayner Alencar">
-      <figcaption>Référence — Rayner Alencar</figcaption>
+      <figcaption>Référence — Concept art de Rayner Alencar</figcaption>
     </figure>
 
     <figure>
@@ -276,8 +302,8 @@
   </div>
 
   <p class="description">
-    Étude de character design stylisé inspirée du travail de Rayner Alencar.
-    Le projet explore la traduction d’un concept art en 3D.
+    Réalisation d'un charadesign en 3D, inspirée d’un concept art de <a href="https://conceptartworld.com/artists/rayner-alencar/" target="_blank">Rayner Alencar</a>.
+    Le projet est le fruit d'une formation avec Pierrick Picaud.
   </p>
 
   <div class="video-embed">
@@ -285,6 +311,9 @@
     <source src="./assets/Characters/Moustache/moustache.mp4" type="video/mp4">
   </video>
 </div>
+    <p class="description">
+          Rendu intermédiairedans Blender.
+        </p>
 </article>
     </section>
   </main>
