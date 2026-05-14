@@ -427,12 +427,22 @@ a {
     width: 100%;
   }
 
-  .feather-embed {
-    padding: 18px;
+.feather-embed {
+    width: auto;
+    height: 78vh;
+
+    aspect-ratio: auto;
+
+    padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .feather-embed iframe {
-    height: calc(100% - 86px);
+    width: 100%;
+    height: 100%;
   }
 
   .image-grid {
