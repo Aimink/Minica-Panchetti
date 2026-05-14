@@ -427,20 +427,13 @@ a {
     width: 100%;
   }
 
-@media (max-width: 700px) {
-
   .feather-embed {
-    width: 100%;
-    padding: 0;
-    aspect-ratio: 1 / 1.15;
+    padding: 18px;
   }
 
   .feather-embed iframe {
-    width: 100%;
-    height: 100%;
+    height: calc(100% - 86px);
   }
-
-}
 
   .image-grid {
     grid-template-columns: 1fr;
@@ -449,40 +442,4 @@ a {
   .silhouette-img {
     width: 70% !important;
   }
-}
-.back-to-top {
-  position: fixed;
-  right: 28px;
-  bottom: 28px;
-
-  width: 48px;
-  height: 48px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-
-  font-size: 1.2rem;
-
-  backdrop-filter: blur(10px);
-
-  transition: 0.3s;
-
-  z-index: 999;
-}
-
-.back-to-top:hover {
-  background: rgba(255,255,255,0.14);
-  border-color: #ff2bbd;
-  color: white;
-
-  transform: translateY(-2px);
 }
