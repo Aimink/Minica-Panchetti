@@ -1,79 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Characters — Minica Panchetti</title>
-
   <link rel="icon" type="image/png" href="gunkan.png">
 
-  <meta name="description"
-    content="Character design, stylisation 3D et animation de Minica Panchetti.">
-
+  <meta name="description" content="Character design, stylisation 3D et animation de Minica Panchetti.">
   <meta name="author" content="Minica Panchetti">
   <meta name="robots" content="index, follow">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-
       background:
         radial-gradient(circle at 18% 8%, rgba(170, 0, 80, 0.35), transparent 28%),
         radial-gradient(circle at 88% 88%, rgba(75, 45, 180, 0.42), transparent 30%),
         #020204;
-
       color: #f4f4f4;
       font-family: "Courier New", Courier, monospace;
-
       overflow-x: hidden;
     }
 
     .noise {
       position: fixed;
       inset: 0;
-
       pointer-events: none;
-
       opacity: 0.08;
-
       background-image:
         linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-
       background-size: 38px 38px;
     }
 
     main {
       position: relative;
       z-index: 1;
-
       padding: 120px 8vw 80px;
     }
 
     .back {
       position: absolute;
-
       top: 48px;
       left: 8vw;
-
       color: rgba(255,255,255,0.45);
-
       text-decoration: none;
-
       font-size: 0.9rem;
       letter-spacing: 0.08em;
-
       border-bottom: 1px solid rgba(255,255,255,0.18);
-
       padding-bottom: 4px;
-
       transition: 0.3s;
     }
 
@@ -84,36 +63,25 @@
 
     h1 {
       margin: 0;
-
       font-size: clamp(2.2rem, 5vw, 4.5rem);
-
       font-weight: 400;
-
       letter-spacing: 0.24em;
-
       text-shadow: 0 0 18px rgba(255,255,255,0.18);
     }
 
     .subtitle {
       margin-top: 42px;
-
       max-width: 760px;
-
       font-size: clamp(0.95rem, 1.4vw, 1.1rem);
-
       line-height: 1.8;
-
       letter-spacing: 0.08em;
-
       color: rgba(255,255,255,0.74);
     }
 
     .gallery {
       margin-top: 100px;
-
       display: flex;
       flex-direction: column;
-
       gap: 120px;
     }
 
@@ -123,58 +91,80 @@
 
     .work-title {
       margin-bottom: 32px;
-
       font-size: 0.95rem;
-
       letter-spacing: 0.18em;
-
       text-transform: uppercase;
-
       color: rgba(255,255,255,0.48);
     }
 
     .sketchfab-embed-wrapper {
       width: 88%;
       max-width: 1100px;
-
       aspect-ratio: 16 / 9;
-
       margin: 0 auto;
-
       border: 1px solid rgba(255,255,255,0.12);
-
       border-radius: 18px;
-
       overflow: hidden;
-
       background: rgba(255,255,255,0.03);
-
       backdrop-filter: blur(10px);
     }
 
     .sketchfab-embed-wrapper iframe {
       width: 100%;
       height: 100%;
-
       border: none;
-
       background: #000;
     }
 
     .description {
       margin-top: 28px;
-
       max-width: 760px;
-
       line-height: 1.8;
-
       letter-spacing: 0.05em;
-
       color: rgba(255,255,255,0.65);
     }
 
-    @media (max-width: 700px) {
+    .description a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      padding-bottom: 3px;
+    }
 
+    .description a:hover {
+      border-bottom-color: #ff2bbd;
+    }
+
+    .process {
+      margin-top: 96px;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px;
+    }
+
+    .image-grid figure {
+      margin: 0;
+    }
+
+    .image-grid img {
+      width: 100%;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .image-grid figcaption {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 700px) {
       main {
         padding: 100px 24px 64px;
       }
@@ -191,34 +181,31 @@
       .sketchfab-embed-wrapper {
         width: 100%;
       }
+
+      .image-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
-
   <div class="noise"></div>
 
   <main>
-
     <a class="back" href="recherche-creation.html">← Retour</a>
 
     <h1>Characters</h1>
 
     <p class="subtitle">
-      Cette page rassemble des expérimentations autour du charadesign.
+      Cette page rassemble des expérimentations autour du character design.
     </p>
 
     <section class="gallery">
-
       <article class="work">
-
-        <div class="work-title">
-          Gerry
-        </div>
+        <div class="work-title">Gerry</div>
 
         <div class="sketchfab-embed-wrapper">
-
           <iframe
             title="Gerry"
             frameborder="0"
@@ -232,21 +219,31 @@
             web-share
             src="https://sketchfab.com/models/1301fef63b4c4120b8cc0651cafc0604/embed">
           </iframe>
-
         </div>
 
         <p class="description">
-          Personnage stylisé inspiré du character design de Robin Davey pour le projet 
-        <a  href=" https://www.robindavey.co.uk/#/sprinklr/">Sprinklr</a>
-        Il s'agit de mobiliser les cours sur la théorie et la symbolique des formes géométriques. 
+          Personnage stylisé inspiré du character design de Robin Davey pour le projet
+          <a href="https://www.robindavey.co.uk/#/sprinklr/" target="_blank">Sprinklr</a>.
+          Ce travail mobilise les cours sur la théorie et la symbolique des formes géométriques.
         </p>
 
+        <section class="process">
+          <div class="work-title">Process</div>
+
+          <div class="image-grid">
+            <figure>
+              <img src="./assets/Characters/Gerry/Gerry_studio.png" alt="Gerry dans Blender">
+              <figcaption>Studio Blender</figcaption>
+            </figure>
+
+            <figure>
+              <img src="./assets/Characters/Gerry/chara_turnaround_flip.png" alt="Turnaround du personnage Gerry">
+              <figcaption>Turnaround</figcaption>
+            </figure>
+          </div>
+        </section>
       </article>
-
     </section>
-
   </main>
-
 </body>
-
 </html>
