@@ -3,6 +3,7 @@
    ========================================================= */
 
 /* ---------- Base ---------- */
+
 * {
   box-sizing: border-box;
 }
@@ -14,12 +15,15 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+
   background:
     radial-gradient(circle at 18% 8%, rgba(170, 0, 80, 0.35), transparent 28%),
     radial-gradient(circle at 88% 88%, rgba(75, 45, 180, 0.42), transparent 30%),
     #020204;
+
   color: #f4f4f4;
   font-family: "Courier New", Courier, monospace;
+
   overflow-x: hidden;
 }
 
@@ -32,9 +36,11 @@ body.home {
   inset: 0;
   pointer-events: none;
   opacity: 0.08;
+
   background-image:
     linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+
   background-size: 38px 38px;
 }
 
@@ -54,16 +60,21 @@ a {
 }
 
 /* ---------- Bouton retour ---------- */
+
 .back {
   position: absolute;
   top: 48px;
   left: 8vw;
+
   color: rgba(255,255,255,0.45);
   text-decoration: none;
+
   font-size: 0.9rem;
   letter-spacing: 0.08em;
+
   border-bottom: 1px solid rgba(255,255,255,0.18);
   padding-bottom: 4px;
+
   transition: 0.3s;
 }
 
@@ -73,16 +84,20 @@ a {
 }
 
 /* =========================================================
-   Pages menu : index.html / recherche-creation.html / Frida.html
-   Mettre : <body class="home">
+   HOME / MENU PAGES
+   index.html / recherche-creation.html / Frida.html
+   body class="home"
    ========================================================= */
 
 .home main {
   min-height: 100vh;
+
   display: flex;
   align-items: center;
   justify-content: flex-start;
+
   text-align: left;
+
   padding: 24px 8vw;
 }
 
@@ -99,9 +114,11 @@ a {
 .home .subtitle,
 .home .statement {
   margin: 42px 0 0;
+
   font-size: clamp(0.95rem, 1.4vw, 1.15rem);
   line-height: 1.6;
   letter-spacing: 0.08em;
+
   color: rgba(255,255,255,0.78);
 }
 
@@ -113,13 +130,9 @@ a {
 .home .statement a {
   color: rgba(255,255,255,0.9);
   text-decoration: none;
+
   border-bottom: 1px solid rgba(255,255,255,0.35);
   padding-bottom: 3px;
-}
-
-.home .statement a:visited,
-.home .statement a:active {
-  color: rgba(255,255,255,0.9);
 }
 
 .home .statement a:hover {
@@ -127,15 +140,9 @@ a {
   border-bottom-color: #ff2bbd;
 }
 
-.home .status {
-  margin: 42px 0 0;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.32);
-}
-
 .home .links {
   margin-top: 64px;
+
   display: flex;
   justify-content: flex-start;
   gap: 54px;
@@ -145,31 +152,35 @@ a {
 .home .links a {
   color: #ffffff;
   text-decoration: none;
+
   font-size: 1.05rem;
   letter-spacing: 0.16em;
+
   text-transform: uppercase;
+
   position: relative;
   padding-bottom: 8px;
 }
 
-.home .links a:visited,
-.home .links a:active {
-  color: #ffffff;
-}
-
 .home .links a::after {
   content: "";
+
   position: absolute;
   left: 0;
   bottom: 0;
+
   width: 100%;
   height: 2px;
+
   background: linear-gradient(90deg, #ff2bbd, #6d5cff);
 }
 
 .home .links a:hover::after {
   animation: underline 0.45s ease;
 }
+
+/* ---------- Footer links accueil ---------- */
+
 .footer-links {
   margin-top: 72px;
 
@@ -191,7 +202,6 @@ a {
   border-radius: 999px;
 
   border: 1px solid rgba(255,255,255,0.12);
-
   background: rgba(255,255,255,0.04);
 
   backdrop-filter: blur(10px);
@@ -201,17 +211,15 @@ a {
 
 .footer-links a:hover {
   color: white;
-
   border-color: rgba(255,43,189,0.7);
-
   background: rgba(255,43,189,0.10);
-
   transform: translateY(-2px);
 }
 
 /* =========================================================
-   Pages galerie : characters.html / sketches.html
-   Mettre : <body class="gallery-page">
+   GALLERY PAGES
+   characters.html / sketches.html
+   body class="gallery-page"
    ========================================================= */
 
 .gallery-page main {
@@ -226,31 +234,36 @@ a {
 .gallery-page .subtitle {
   margin-top: 42px;
   max-width: 760px;
+
   font-size: clamp(0.95rem, 1.4vw, 1.1rem);
   line-height: 1.8;
   letter-spacing: 0.08em;
+
   color: rgba(255,255,255,0.74);
 }
 
 .gallery {
   margin-top: 100px;
+
   display: flex;
   flex-direction: column;
   gap: 120px;
 }
 
-  .work {
+.work {
   display: flex;
   flex-direction: column;
   gap: 28px;
-
 }
 
 .work-title {
   margin-bottom: 32px;
+
   font-size: 0.95rem;
   letter-spacing: 0.18em;
+
   text-transform: uppercase;
+
   color: rgba(255,255,255,0.48);
 }
 
@@ -258,51 +271,38 @@ a {
   margin-top: 96px;
 }
 
-/* ---------- Textes sous médias ---------- */
-.description{
-  .embed-caption {
-  max-width: 760px;
-  margin: 28px auto 0;
-  line-height: 1.8;
-  letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.65);
+/* ---------- Textes ---------- */
 
-}
-}
+.description,
 .embed-caption {
   max-width: 760px;
   margin: 28px auto 0;
+
   line-height: 1.8;
   letter-spacing: 0.05em;
+
   color: rgba(255,255,255,0.65);
+}
+
+.embed-caption {
   text-align: center;
-}
 
-.embed-caption {
-  margin-top: 14px;
-  color: rgba(255,255,255,0.45);
   font-size: 0.85rem;
   letter-spacing: 0.08em;
+
+  color: rgba(255,255,255,0.45);
 }
 
-/* ---------- Liens dans les textes/captions ---------- */
 .inline-link,
 .description a,
 .embed-caption a {
   color: rgba(255,255,255,0.9) !important;
   text-decoration: none;
+
   border-bottom: 1px solid rgba(255,255,255,0.25);
   padding-bottom: 2px;
-  transition: 0.3s;
-}
 
-.inline-link:visited,
-.inline-link:active,
-.description a:visited,
-.description a:active,
-.embed-caption a:visited,
-.embed-caption a:active {
-  color: rgba(255,255,255,0.9) !important;
+  transition: 0.3s;
 }
 
 .inline-link:hover,
@@ -312,9 +312,7 @@ a {
   border-bottom-color: #ff2bbd;
 }
 
-/* =========================================================
-   Grilles images
-   ========================================================= */
+/* ---------- Images ---------- */
 
 .image-grid {
   display: grid;
@@ -329,73 +327,98 @@ a {
 
 .image-grid img {
   width: 100%;
+
   display: block;
+
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
+
   background: rgba(255,255,255,0.03);
 }
 
 .image-grid figcaption {
   margin-top: 14px;
+
   color: rgba(255,255,255,0.45);
+
   font-size: 0.85rem;
   letter-spacing: 0.08em;
+
   text-align: center;
 }
 
 .silhouette-img {
-  width: 55% !important;
+  width: 38% !important;
+  max-width: 420px;
   margin: 0 auto;
+  display: block;
 }
 
-/* =========================================================
-   Embeds : Sketchfab / Feather / Vidéo
-   ========================================================= */
+/* ---------- Embeds ---------- */
 
 .sketchfab-embed-wrapper {
   width: 88%;
   max-width: 1100px;
+
   aspect-ratio: 16 / 9;
+
   margin: 0 auto;
+
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
+
   overflow: hidden;
+
   background: rgba(255,255,255,0.03);
+
   backdrop-filter: blur(10px);
 }
 
 .sketchfab-embed-wrapper iframe {
   width: 100%;
   height: 100%;
+
   border: none;
+
   background: #000000;
 }
 
 .feather-embed {
   width: 88%;
   max-width: 900px;
+
   aspect-ratio: 1 / 1;
+
   margin: 0 auto;
   padding: 24px;
+
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
+
   overflow: hidden;
+
   background: rgba(255,255,255,0.03);
+
   backdrop-filter: blur(10px);
 }
 
 .feather-embed iframe {
   width: 100%;
   height: calc(100% - 62px);
+
   border: none;
+
   background: #000000;
 }
 
 .embed-note {
   width: 88%;
   max-width: 900px;
+
   margin: 0 auto 18px;
+
   color: rgba(255,255,255,0.82);
+
   font-size: 1rem;
   letter-spacing: 0.04em;
   line-height: 1.7;
@@ -404,105 +427,211 @@ a {
 .video-embed {
   width: 88%;
   max-width: 900px;
+
   aspect-ratio: 1 / 1;
+
   margin: 0 auto;
+
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
+
   overflow: hidden;
+
   background: #000000;
 }
 
 .video-embed video {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   display: block;
+
   background: #000000;
 }
 
 /* =========================================================
-   Animations
+   VRUN PAGE
+   vrun.html
+   body class="vrun-page"
    ========================================================= */
 
-@keyframes appear {
-  from {
-    opacity: 0;
-    transform: translateY(5vh);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.vrun-page main {
+  padding: 120px 8vw 80px;
 }
 
-@keyframes underline {
-  0% { transform: scaleX(1); }
-  50% { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
+.vrun-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
 }
+
+/* ---------- VRUN nav ---------- */
+
+.vrun-nav {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.vrun-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.vrun-menu a {
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  padding: 12px 18px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+
+  backdrop-filter: blur(10px);
+
+  transition: 0.3s ease;
+}
+
+.vrun-menu a:hover {
+  color: white;
+  border-color: rgba(255,43,189,0.7);
+  background: rgba(255,43,189,0.10);
+  transform: translateY(-2px);
+}
+
+/* ---------- VRUN hero + profils côte à côte ---------- */
+
+.vrun-hero {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(320px, 520px));
+
+  justify-content: center;
+
+  gap: 42px;
+}
+
+.vrun-intro {
+  grid-column: 1 / -1;
+  max-width: 760px;
+}
+
+.vrun-kicker {
+  margin: 0 0 24px;
+
+  color: rgba(255,255,255,0.45);
+
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.vrun-title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  letter-spacing: 0.18em;
+}
+
+.vrun-description {
+  margin-top: 36px;
+
+  max-width: 760px;
+
+  line-height: 1.9;
+  letter-spacing: 0.05em;
+
+  color: rgba(255,255,255,0.72);
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  padding: 28px;
+
+  border-radius: 28px;
+
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+
+  backdrop-filter: blur(10px);
+}
+
+
+
+.profile-card img {
+
+
+    width: 78%;
+
+  margin: 0 auto;
+
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 22px;
+}
+
+.profile-content h2 {
+  margin: 0;
+
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  letter-spacing: 0.08em;
+}
+
+.profile-role {
+  color: rgba(255,255,255,0.78);
+
+  line-height: 1.8;
+}
+
+.profile-bio {
+  margin-top: 24px;
+
+  color: rgba(255,255,255,0.62);
+
+  line-height: 1.9;
+}
+
+.profile-links {
+  margin-top: 32px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.profile-link {
+  color: rgba(255,255,255,0.9);
+
+  text-decoration: none;
+
+  border-bottom: 1px solid rgba(255,255,255,0.22);
+  padding-bottom: 3px;
+
+  transition: 0.3s;
+}
+
+.profile-link:hover {
+  border-bottom-color: #ff2bbd;
+}
+
+
+
 
 /* =========================================================
-   Responsive
+   Bouton retour haut
    ========================================================= */
 
-@media (max-width: 700px) {
-  .home main {
-    padding: 24px;
-    align-items: center;
-  }
-
-  .gallery-page main {
-    padding: 100px 24px 64px;
-  }
-
-  h1,
-  .home h1,
-  .gallery-page h1 {
-    font-size: 2rem;
-    letter-spacing: 0.12em;
-  }
-
-  .home .links {
-    gap: 28px;
-  }
-
-  .gallery {
-    gap: 80px;
-  }
-
-  .sketchfab-embed-wrapper,
-  .video-embed,
-  .feather-embed,
-  .embed-note {
-    width: 100%;
-  }
-
-.feather-embed {
-    width: auto;
-    height: 78vh;
-
-    aspect-ratio: auto;
-
-    padding: 0;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .feather-embed iframe {
-    width: 100%;
-    height: 100%;
-  }
-
-  .image-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .silhouette-img {
-    width: 70% !important;
-  }
-}
 .back-to-top {
   position: fixed;
 
@@ -531,9 +660,6 @@ a {
   transition: 0.3s ease;
 
   z-index: 999999;
-
-  opacity: 1;
-  visibility: visible;
 }
 
 .back-to-top:hover {
@@ -543,4 +669,119 @@ a {
   color: white;
 
   transform: translateY(-2px);
+}
+
+/* =========================================================
+   Animations
+   ========================================================= */
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(5vh);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes underline {
+  0% { transform: scaleX(1); }
+  50% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .vrun-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .vrun-reference-card {
+    grid-template-columns: 1fr;
+  }
+
+  .vrun-video-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .home main {
+    padding: 24px;
+    align-items: center;
+  }
+
+  .gallery-page main,
+  .vrun-page main {
+    padding: 100px 24px 64px;
+  }
+
+  h1,
+  .home h1,
+  .gallery-page h1 {
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+  }
+
+  .vrun-title {
+    font-size: 3rem;
+    letter-spacing: 0.14em;
+  }
+
+  .home .links {
+    gap: 28px;
+  }
+
+  .gallery {
+    gap: 80px;
+  }
+
+  .image-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sketchfab-embed-wrapper,
+  .video-embed,
+  .feather-embed,
+  .embed-note {
+    width: 100%;
+  }
+
+  .feather-embed {
+    height: 78vh;
+    aspect-ratio: auto;
+
+    padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .feather-embed iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .silhouette-img {
+    width: 62% !important;
+  }
+
+  .vrun-nav {
+    justify-content: flex-start;
+  }
+
+  .vrun-menu {
+    gap: 14px;
+  }
+
+  .profile-card {
+    padding: 24px;
+  }
 }

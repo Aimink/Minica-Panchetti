@@ -1,0 +1,758 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  background:
+    radial-gradient(circle at top left,
+      rgba(80,0,40,0.22),
+      transparent 28%),
+
+    radial-gradient(circle at bottom right,
+      rgba(50,20,120,0.20),
+      transparent 30%),
+
+    #020304;
+
+  color: #f4f4f4;
+
+  font-family: "Courier New", monospace;
+
+  overflow-x: hidden;
+}
+
+main {
+  position: relative;
+  z-index: 2;
+}
+
+a {
+  color: inherit;
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.05;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+  background-size: 42px 42px;
+
+  z-index: 1;
+}
+
+/* =========================================================
+   HOME
+========================================================= */
+
+body.home main {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+
+  padding: 80px 8vw;
+}
+
+.content {
+  max-width: 760px;
+}
+
+.content h1 {
+  margin: 0;
+
+  font-size: clamp(2.8rem, 6vw, 5rem);
+
+  letter-spacing: -0.04em;
+
+  line-height: 0.95;
+}
+
+.statement {
+  margin-top: 28px;
+
+  color: rgba(255,255,255,0.75);
+
+  line-height: 1.9;
+
+  font-size: 1rem;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 28px;
+
+  margin-top: 42px;
+}
+
+.links a {
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 1rem;
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.25);
+
+  transition: 0.3s ease;
+}
+
+.links a:hover {
+  color: #ff4fd2;
+
+  border-bottom-color: #ff4fd2;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-top: 18px;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.8);
+
+  text-decoration: none;
+
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   GALLERY PAGES
+========================================================= */
+
+.gallery-page main {
+  padding:
+    120px
+    8vw
+    80px;
+}
+
+.gallery-page h1 {
+  margin: 0;
+
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  margin-top: 24px;
+
+  max-width: 720px;
+
+  color: rgba(255,255,255,0.72);
+
+  line-height: 1.9;
+}
+
+.back {
+  position: absolute;
+
+  top: 42px;
+  left: 8vw;
+
+  color: rgba(255,255,255,0.6);
+
+  text-decoration: none;
+
+  font-size: 0.9rem;
+
+  transition: 0.3s ease;
+}
+
+.back:hover {
+  color: white;
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+
+  gap: 120px;
+
+  margin-top: 90px;
+}
+
+.work-title {
+  margin-bottom: 26px;
+
+  font-size: 1rem;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+.description,
+.embed-caption {
+  margin-top: 18px;
+
+  color: rgba(255,255,255,0.65);
+
+  line-height: 1.9;
+}
+
+.inline-link {
+  color: white;
+
+  text-decoration: none;
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.25);
+}
+
+.inline-link:hover {
+  color: #ff4fd2;
+
+  border-bottom-color: #ff4fd2;
+}
+
+/* =========================================================
+   EMBEDS
+========================================================= */
+
+.sketchfab-embed-wrapper,
+.feather-embed,
+.video-embed {
+  width: 100%;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  background: black;
+}
+
+.sketchfab-embed-wrapper {
+  aspect-ratio: 16 / 9;
+}
+
+.feather-embed {
+  aspect-ratio: 16 / 9;
+}
+
+.video-embed {
+  aspect-ratio: 1 / 1;
+}
+
+.sketchfab-embed-wrapper iframe,
+.feather-embed iframe,
+.video-embed video {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+
+  display: block;
+}
+
+/* =========================================================
+   IMAGE GRID
+========================================================= */
+
+.image-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0,1fr));
+
+  gap: 32px;
+
+  margin-top: 36px;
+}
+
+.image-grid figure {
+  margin: 0;
+}
+
+.image-grid img {
+  width: 100%;
+
+  display: block;
+
+  border-radius: 18px;
+}
+
+.silhouette-img {
+  width: 70% !important;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   BACK TO TOP
+========================================================= */
+
+.back-to-top {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(0,0,0,0.65);
+
+  border:
+    1px solid rgba(255,255,255,0.14);
+
+  color: rgba(255,255,255,0.82);
+
+  text-decoration: none;
+
+  font-size: 1.2rem;
+
+  backdrop-filter: blur(12px);
+
+  transition: 0.35s ease;
+
+  z-index: 9999;
+}
+
+.back-to-top:hover {
+  transform: translateY(-3px);
+
+  color: white;
+}
+
+/* =========================================================
+   VRUN PAGE
+========================================================= */
+
+body.vrun-page main {
+  padding: 42px;
+}
+
+body.vrun-page .vrun-shell {
+  max-width: 1450px;
+
+  margin: 0 auto;
+
+  background: rgba(2,4,6,0.96);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.45);
+}
+
+/* =========================================================
+   VRUN NAV
+========================================================= */
+
+body.vrun-page .vrun-nav {
+  display: flex;
+  justify-content: flex-end;
+
+  padding:
+    28px
+    42px
+    10px;
+}
+
+body.vrun-page .vrun-menu {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 34px;
+}
+
+body.vrun-page .vrun-menu a {
+  color: rgba(255,255,255,0.9);
+
+  text-decoration: none;
+
+  font-size: 0.72rem;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   VRUN HERO
+========================================================= */
+
+body.vrun-page .vrun-hero {
+  display: grid;
+
+  grid-template-columns:
+    0.75fr
+    1fr
+    1fr;
+
+  gap: 54px;
+
+  padding:
+    46px
+    42px
+    70px;
+}
+
+body.vrun-page .vrun-intro {
+  padding-top: 40px;
+}
+
+body.vrun-page .vrun-kicker {
+  margin: 0 0 20px;
+
+  color: rgba(255,255,255,0.45);
+
+  font-size: 0.8rem;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+body.vrun-page .vrun-title {
+  margin: 0;
+
+  font-size: clamp(4rem, 8vw, 6rem);
+
+  line-height: 0.95;
+
+  letter-spacing: -0.06em;
+}
+
+body.vrun-page .vrun-description {
+  margin-top: 34px;
+
+  max-width: 320px;
+
+  color: rgba(255,255,255,0.7);
+
+  line-height: 1.9;
+}
+
+/* =========================================================
+   VRUN PROFILE CARDS
+========================================================= */
+
+body.vrun-page .profile-card {
+  padding-left: 34px;
+
+  border-left:
+    1px solid rgba(255,255,255,0.08);
+}
+
+body.vrun-page .profile-card img {
+  width: 100%;
+
+  height: 360px;
+
+  object-fit: cover;
+
+  display: block;
+
+  border-radius: 18px;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 0 18px rgba(255,255,255,0.05),
+    0 0 42px rgba(120,80,255,0.10);
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+body.vrun-page .profile-card:hover img {
+  transform: scale(1.01);
+
+  box-shadow:
+    0 0 24px rgba(255,255,255,0.08),
+    0 0 64px rgba(120,80,255,0.16);
+}
+
+body.vrun-page .profile-card.raphael img {
+  object-position: 58% 22%;
+}
+
+body.vrun-page .profile-card.minica img {
+  object-position: 92% 18%;
+}
+
+body.vrun-page .profile-content {
+  padding-top: 18px;
+}
+
+body.vrun-page .profile-content h2 {
+  margin: 0 0 14px;
+
+  font-size: 1.2rem;
+
+  text-transform: uppercase;
+}
+
+body.vrun-page .profile-role {
+  color: rgba(255,255,255,0.72);
+
+  line-height: 1.7;
+
+  font-size: 0.82rem;
+}
+
+body.vrun-page .profile-bio {
+  color: rgba(255,255,255,0.52);
+
+  line-height: 1.9;
+
+  font-size: 0.82rem;
+}
+
+body.vrun-page .profile-links {
+  display: flex;
+
+  gap: 28px;
+
+  margin-top: 24px;
+}
+
+body.vrun-page .profile-link {
+  text-decoration: none;
+
+  font-size: 0.72rem;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   VRUN ABOUT
+========================================================= */
+
+body.vrun-page .vrun-about,
+body.vrun-page .vrun-media {
+  display: grid;
+
+  grid-template-columns:
+    280px
+    1fr;
+
+  gap: 54px;
+
+  padding:
+    54px
+    42px
+    70px;
+
+  border-top:
+    1px solid rgba(255,255,255,0.08);
+}
+
+body.vrun-page .vrun-about h3,
+body.vrun-page .vrun-media h3 {
+  margin: 0;
+
+  font-size: 1.8rem;
+
+  text-transform: uppercase;
+}
+
+body.vrun-page .vrun-about-content p {
+  color: rgba(255,255,255,0.7);
+
+  line-height: 1.9;
+}
+
+/* =========================================================
+   VRUN TAGS
+========================================================= */
+
+body.vrun-page .vrun-tags {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 34px;
+}
+
+body.vrun-page .vrun-tags span {
+  padding:
+    10px
+    16px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  font-size: 0.72rem;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   EMIKA CARD
+========================================================= */
+
+body.vrun-page .vrun-reference-card {
+  display: grid;
+
+  grid-template-columns:
+    360px
+    1fr;
+
+  gap: 36px;
+
+  margin-top: 52px;
+
+  padding: 22px;
+
+  border-radius: 18px;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  background:
+    rgba(255,255,255,0.02);
+}
+
+body.vrun-page .vrun-reference-card img {
+  width: 100%;
+
+  display: block;
+
+  border-radius: 18px;
+
+  object-fit: contain;
+
+  background: black;
+}
+
+body.vrun-page .vrun-reference-text h4 {
+  margin: 0 0 18px;
+
+  text-transform: uppercase;
+}
+
+body.vrun-page .vrun-reference-text p {
+  color: rgba(255,255,255,0.66);
+
+  line-height: 1.9;
+}
+
+/* =========================================================
+   VIDEOS
+========================================================= */
+
+body.vrun-page .vrun-video-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0,1fr));
+
+  gap: 36px;
+}
+
+body.vrun-page .vrun-video-card {
+  padding: 18px;
+
+  border-radius: 18px;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  background:
+    rgba(255,255,255,0.02);
+}
+
+body.vrun-page .vrun-video-wrapper {
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background: black;
+}
+
+body.vrun-page .vrun-video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  body.vrun-page .vrun-hero {
+    grid-template-columns: 1fr;
+  }
+
+  body.vrun-page .vrun-about,
+  body.vrun-page .vrun-media {
+    grid-template-columns: 1fr;
+  }
+
+  body.vrun-page .vrun-video-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.vrun-page .profile-card {
+    padding-left: 0;
+
+    border-left: none;
+  }
+}
+
+@media (max-width: 800px) {
+
+  body.vrun-page main {
+    padding: 18px;
+  }
+
+  body.vrun-page .vrun-reference-card {
+    grid-template-columns: 1fr;
+  }
+
+  body.vrun-page .profile-card img {
+    height: 300px;
+  }
+
+  .image-grid {
+    grid-template-columns: 1fr;
+  }
+}
