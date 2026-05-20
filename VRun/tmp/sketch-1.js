@@ -32,61 +32,21 @@ let brushA = 0;
 let brushR = 0;
 let brushActive = false;
 
-
-function getVRunContainerSize() {
-  const container = document.getElementById("vrun-p5") || document.body;
-  const rect = container.getBoundingClientRect();
-
-  return {
-    w: Math.max(320, Math.floor(rect.width || window.innerWidth)),
-    h: Math.max(320, Math.floor(rect.height || window.innerHeight))
-  };
-}
-
-function isOverMainButton(x, y) {
-  return (
-    x > buttonX - buttonW / 2 &&
-    x < buttonX + buttonW / 2 &&
-    y > buttonY - buttonH / 2 &&
-    y < buttonY + buttonH / 2
-  );
-}
-
-function isOverClearButton(x, y) {
-  return (
-    paintMode &&
-    x > clearX - clearW / 2 &&
-    x < clearX + clearW / 2 &&
-    y > clearY - clearH / 2 &&
-    y < clearY + clearH / 2
-  );
-}
-
-function openVRunExperience() {
-  window.open("https://raphaelmarczak.itch.io/vrun?password=FILWS", "_blank", "noopener");
-}
-
 function preload() {
   poster = loadImage("vrun.png");
   brush = loadImage("pinceau.png", (img) => {
     img.filter(INVERT);
   });
 }
+
 function setup() {
-  const container = document.getElementById("vrun-p5");
-
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-
-  let cnv = createCanvas(w, h);
-  cnv.parent("vrun-p5");
-
+  createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   noCursor();
 
   initParticles();
 
-  paintLayer = createGraphics(w, h);
+  paintLayer = createGraphics(windowWidth, windowHeight);
   paintLayer.clear();
 
   diff = brushSize / 8;
@@ -135,7 +95,7 @@ function draw() {
 }
 
 function isMobileLayout() {
-  return window.innerWidth < 700;
+  return width < 900;
 }
 
 function drawGradient() {
@@ -510,12 +470,38 @@ function drawCursor() {
 
   pop();
 }
+
 function mousePressed() {
+  if (isMobileLayout()) return;
+
+  if (hoverButton && !paintMode) {
+    paintMode = true;
+  } else if (hoverButton && paintMode) {
+    window.open("https://raphaelmarczak.itch.io/vrun?password=FILWS", "_blank");
+  }
+}
+
+function touchStarted() {
+  let tx = touches[0].x;
+  let ty = touches[0].y;
+
   let overMainButton =
-    mouseX > buttonX - buttonW / 2 &&
-    mouseX < buttonX + buttonW / 2 &&
-    mouseY > buttonY - buttonH / 2 &&
-    mouseY < buttonY + buttonH / 2;
+    tx > buttonX - buttonW / 2 &&
+    tx < buttonX + buttonW / 2 &&
+    ty > buttonY - buttonH / 2 &&
+    ty < buttonY + buttonH / 2;
+
+  let overClearButton =
+    paintMode &&
+    tx > clearX - clearW / 2 &&
+    tx < clearX + clearW / 2 &&
+    ty > clearY - clearH / 2 &&
+    ty < clearY + clearH / 2;
+
+  if (overClearButton) {
+    paintLayer.clear();
+    return false;
+  }
 
   if (overMainButton) {
     if (!paintMode) {
@@ -523,28 +509,6 @@ function mousePressed() {
     } else {
       window.open("https://raphaelmarczak.itch.io/vrun?password=FILWS", "_blank");
     }
-
-    return false;
-  }
-}
-function touchStarted() {
-  const t = touches && touches.length ? touches[0] : { x: mouseX, y: mouseY };
-  const tx = t.x;
-  const ty = t.y;
-
-  if (isOverClearButton(tx, ty)) {
-    paintLayer.clear();
-    return false;
-  }
-
-  if (isOverMainButton(tx, ty)) {
-    if (!paintMode) {
-      paintMode = true;
-      return false;
-    }
-
-    openVRunExperience();
-    return false;
   }
 
   return false;
@@ -575,22 +539,11 @@ function touchEnded() {
   return false;
 }
 function windowResized() {
-
-  const container =
-    document.getElementById("vrun-p5");
-
-  const w =
-    container.offsetWidth;
-
-  const h =
-    container.offsetHeight;
-
-  resizeCanvas(w, h);
-
-  paintLayer =
-    createGraphics(w, h);
-
-  paintLayer.clear();
-
+  resizeCanvas(windowWidth, windowHeight);
   initParticles();
+
+  let newLayer = createGraphics(windowWidth, windowHeight);
+  newLayer.clear();
+  newLayer.image(paintLayer, 0, 0);
+  paintLayer = newLayer;
 }

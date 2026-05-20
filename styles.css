@@ -785,3 +785,10 @@ a {
     padding: 24px;
   }
 }
+.back-to-top {
+  z-index: 99999;
+}
+.vrun-hero-right {
+  position: relative;
+  z-index: 1;
+}

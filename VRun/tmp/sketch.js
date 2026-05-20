@@ -32,61 +32,29 @@ let brushA = 0;
 let brushR = 0;
 let brushActive = false;
 
-
-function getVRunContainerSize() {
-  const container = document.getElementById("vrun-p5") || document.body;
-  const rect = container.getBoundingClientRect();
-
-  return {
-    w: Math.max(320, Math.floor(rect.width || window.innerWidth)),
-    h: Math.max(320, Math.floor(rect.height || window.innerHeight))
-  };
-}
-
-function isOverMainButton(x, y) {
-  return (
-    x > buttonX - buttonW / 2 &&
-    x < buttonX + buttonW / 2 &&
-    y > buttonY - buttonH / 2 &&
-    y < buttonY + buttonH / 2
-  );
-}
-
-function isOverClearButton(x, y) {
-  return (
-    paintMode &&
-    x > clearX - clearW / 2 &&
-    x < clearX + clearW / 2 &&
-    y > clearY - clearH / 2 &&
-    y < clearY + clearH / 2
-  );
-}
-
-function openVRunExperience() {
-  window.open("https://raphaelmarczak.itch.io/vrun?password=FILWS", "_blank", "noopener");
-}
-
 function preload() {
   poster = loadImage("vrun.png");
   brush = loadImage("pinceau.png", (img) => {
     img.filter(INVERT);
   });
 }
+
+function fitToViewport() {
+  return {
+    w: Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320),
+    h: Math.max(320, window.innerHeight || document.documentElement.clientHeight || 320)
+  };
+}
+
 function setup() {
-  const container = document.getElementById("vrun-p5");
-
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-
-  let cnv = createCanvas(w, h);
-  cnv.parent("vrun-p5");
-
+  const size = fitToViewport();
+  createCanvas(size.w, size.h);
   rectMode(CENTER);
   noCursor();
 
   initParticles();
 
-  paintLayer = createGraphics(w, h);
+  paintLayer = createGraphics(width, height);
   paintLayer.clear();
 
   diff = brushSize / 8;
@@ -135,7 +103,7 @@ function draw() {
 }
 
 function isMobileLayout() {
-  return window.innerWidth < 700;
+  return width < 900;
 }
 
 function drawGradient() {
@@ -510,41 +478,55 @@ function drawCursor() {
 
   pop();
 }
-function mousePressed() {
-  let overMainButton =
-    mouseX > buttonX - buttonW / 2 &&
-    mouseX < buttonX + buttonW / 2 &&
-    mouseY > buttonY - buttonH / 2 &&
-    mouseY < buttonY + buttonH / 2;
 
-  if (overMainButton) {
-    if (!paintMode) {
-      paintMode = true;
-    } else {
-      window.open("https://raphaelmarczak.itch.io/vrun?password=FILWS", "_blank");
+function openInteractiveExperience() {
+  const url = "https://raphaelmarczak.itch.io/vrun?password=FILWS";
+
+  // In an iframe, this keeps the click reliable by navigating the parent page when allowed.
+  try {
+    if (window.top && window.top !== window.self) {
+      window.top.location.href = url;
+      return;
     }
+  } catch (error) {
+    // Cross-origin fallback below.
+  }
 
+  window.open(url, "_blank", "noopener");
+}
+
+function mousePressed() {
+  if (hoverButton) {
+    openInteractiveExperience();
     return false;
   }
 }
-function touchStarted() {
-  const t = touches && touches.length ? touches[0] : { x: mouseX, y: mouseY };
-  const tx = t.x;
-  const ty = t.y;
 
-  if (isOverClearButton(tx, ty)) {
+
+function touchStarted() {
+  let tx = touches[0].x;
+  let ty = touches[0].y;
+
+  let overMainButton =
+    tx > buttonX - buttonW / 2 &&
+    tx < buttonX + buttonW / 2 &&
+    ty > buttonY - buttonH / 2 &&
+    ty < buttonY + buttonH / 2;
+
+  let overClearButton =
+    paintMode &&
+    tx > clearX - clearW / 2 &&
+    tx < clearX + clearW / 2 &&
+    ty > clearY - clearH / 2 &&
+    ty < clearY + clearH / 2;
+
+  if (overClearButton) {
     paintLayer.clear();
     return false;
   }
 
-  if (isOverMainButton(tx, ty)) {
-    if (!paintMode) {
-      paintMode = true;
-      return false;
-    }
-
-    openVRunExperience();
-    return false;
+  if (overMainButton) {
+    openInteractiveExperience();
   }
 
   return false;
@@ -575,22 +557,14 @@ function touchEnded() {
   return false;
 }
 function windowResized() {
-
-  const container =
-    document.getElementById("vrun-p5");
-
-  const w =
-    container.offsetWidth;
-
-  const h =
-    container.offsetHeight;
-
-  resizeCanvas(w, h);
-
-  paintLayer =
-    createGraphics(w, h);
-
-  paintLayer.clear();
-
+  const size = fitToViewport();
+  resizeCanvas(size.w, size.h);
   initParticles();
+
+  let newLayer = createGraphics(width, height);
+  newLayer.clear();
+  if (paintLayer) {
+    newLayer.image(paintLayer, 0, 0, width, height);
+  }
+  paintLayer = newLayer;
 }
