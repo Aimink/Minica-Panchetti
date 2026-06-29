@@ -792,3 +792,35 @@ a {
   position: relative;
   z-index: 1;
 }
+/* Language switch */
+.language-switch {
+  position: fixed;
+  top: 22px;
+  right: 22px;
+  z-index: 20;
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  font-family: "Courier New", monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.42);
+}
+.language-switch a {
+  color: rgba(255,255,255,0.62);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.language-switch a:hover { color: #fff; }
+.language-switch a.active {
+  color: #fff;
+  font-weight: 700;
+}
+@media (max-width: 700px) {
+  .language-switch {
+    top: 14px;
+    right: 14px;
+    font-size: 0.75rem;
+  }
+}

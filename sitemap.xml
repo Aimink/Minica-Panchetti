@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <url>
-    <loc>https://www.minica-panchetti.fr/</loc>
-  </url>
-
-  <url>
-    <loc>https://www.minica-panchetti.fr/characters.html</loc>
-  </url>
-
-  <url>
-    <loc>https://www.minica-panchetti.fr/recherche-creation.html</loc>
-  </url>
-
+  <url><loc>https://minica-panchetti.fr/</loc></url>
+  <url><loc>https://minica-panchetti.fr/research-creation.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/characters.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/sketches.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/Frida.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/VRun-1.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/recherche-creation.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/characters.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/sketches.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/Frida.html</loc></url>
+  <url><loc>https://minica-panchetti.fr/fr/VRun-1.html</loc></url>
 </urlset>

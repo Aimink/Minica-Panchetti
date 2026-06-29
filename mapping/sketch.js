@@ -4,11 +4,11 @@ let paintLayer;
 // =========================
 // DETECTION LASER MAGENTA / ROUGE
 // =========================
-let minRed = 140;
-let maxGreen = 190;
-let maxBlue = 220;
-let minRedDominance = 5;
-let minBrightness = 60;
+let minRed = 70;
+let maxGreen = 255;
+let maxBlue = 255;
+let minRedDominance = 0;
+let minBrightness = 25;
 
 // =========================
 // BRUSH VRUN / GRAFFITI
@@ -29,16 +29,23 @@ let brushActive = false;
 // =========================
 // EFFETS PEINTURE
 // =========================
-let fadeAmount = 5;       // 0 = le dessin ne disparaît pas
-let glowBlur = 22;        // intensité du halo
-let glowAlpha = 170;      // opacité du trait principal
-let sprayChance = 0.08;   // faible : évite les petits points trop artificiels
-let dripChance = 0.02;//0.055;   // coulures
+let fadeAmount = 5;
+let glowBlur = 22;
+let glowAlpha = 170;
+let sprayChance = 0.08;
+let dripChance = 0.02;
+
+// =========================
+// TIMER EFFACEMENT
+// =========================
+let lastPaintTime = 0;
+let eraseDuration = 2000;
 
 // =========================
 // LASER POSITION
 // =========================
 let laserFound = false;
+let detectedPixels = 0;
 
 let rawLaserX = 0;
 let rawLaserY = 0;
@@ -50,6 +57,13 @@ let smoothLaserY = 0;
 let smoothing = 0.35;
 
 let laserSpeed = 0;
+let currentCameraLaserX = 0;
+let currentCameraLaserY = 0;
+let debugBestR = 0;
+let debugBestG = 0;
+let debugBestB = 0;
+let debugBestBrightness = 0;
+let debugBestScore = -999999;
 
 // =========================
 // AFFICHAGE
@@ -57,15 +71,31 @@ let laserSpeed = 0;
 let showCamera = true;
 let showHUD = true;
 let showZone = true;
+let useCalibrationPolygon = true;
 
 // =========================
 // ZONE DE DETECTION CAMERA
-// valeurs en pixels de la webcam 640x480
 // =========================
 let roiX = 0;
 let roiY = 0;
 let roiW = 640;
 let roiH = 480;
+
+// =========================
+// CALIBRATION CAMERA -> CANVAS
+// Ordre : haut gauche, haut droite, bas droite, bas gauche.
+// =========================
+let calibrationMode = true;
+let calibrationPoints = [
+  { x: null, y: null, locked: false },
+  { x: null, y: null, locked: false },
+  { x: null, y: null, locked: false },
+  { x: null, y: null, locked: false }
+];
+
+let selectedCalibrationCorner = 0;
+let homography = null;
+let calibrationMessage = "Calibrage : coin 1, visez-le avec le laser puis appuyez sur Espace.";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -85,30 +115,37 @@ function setup() {
 }
 
 function draw() {
-  // Pour projection transparente dans TouchDesigner :
-  // remplace background(20) par clear().
   background(20);
-  // clear();
 
-  if (showCamera) {
+  if (showCamera && cam && cam.width > 0 && cam.height > 0) {
     push();
     tint(255, 180);
     image(cam, 0, 0, width, height);
     pop();
   }
 
-//  if (fadeAmount > 0) {
-//  applyFade();
-//  }
+  if (cam && cam.width > 0 && cam.height > 0) {
+    detectRedLaser();
+    updateBrushPaintingLaser();
+  }
 
-  detectRedLaser();
-  updateBrushPaintingLaser();
+  if (millis() - lastPaintTime > eraseDuration && lastPaintTime > 0) {
+    paintLayer.clear();
+    lastPaintTime = 0;
+  }
 
-  image(paintLayer, 0, 0);
-  //if (frameCount % 120 == 0) {
-//    paintLayer.clear();
-//  }
+  drawPaintLayer();
+
   drawLaserCursor();
+
+  if (homography) {
+    drawCalibratedZone();
+  }
+
+  if (calibrationMode) {
+    drawCanvasOverlay();
+    drawCalibrationGuide();
+  }
 
   if (showZone) {
     drawDetectionZone();
@@ -120,6 +157,8 @@ function draw() {
 }
 
 function drawDetectionZone() {
+  if (!cam || cam.width <= 0 || cam.height <= 0) return;
+
   push();
   noFill();
   stroke(0, 255, 0);
@@ -134,26 +173,209 @@ function drawDetectionZone() {
   pop();
 }
 
-function applyFade() {
-  paintLayer.push();
-  paintLayer.noStroke();
-  paintLayer.drawingContext.globalCompositeOperation = "destination-out";
-  paintLayer.fill(0, 0, 0, fadeAmount);
-  paintLayer.rect(0, 0, paintLayer.width, paintLayer.height);
-  paintLayer.drawingContext.globalCompositeOperation = "source-over";
-  paintLayer.pop();
+function drawPaintLayer() {
+  let allLocked = calibrationPoints.every((p) => p.locked && p.x !== null && p.y !== null);
+
+  if (!homography || !allLocked) {
+    image(paintLayer, 0, 0);
+    return;
+  }
+
+  push();
+  drawingContext.save();
+  drawingContext.beginPath();
+
+  for (let i = 0; i < calibrationPoints.length; i++) {
+    let screen = cameraPointToScreen(calibrationPoints[i]);
+
+    if (i === 0) {
+      drawingContext.moveTo(screen.x, screen.y);
+    } else {
+      drawingContext.lineTo(screen.x, screen.y);
+    }
+  }
+
+  drawingContext.closePath();
+  drawingContext.clip();
+  image(paintLayer, 0, 0);
+  drawingContext.restore();
+  pop();
+}
+
+function drawCanvasOverlay() {
+  push();
+
+  let defaultCorners = getDefaultScreenCorners();
+
+  for (let i = 0; i < calibrationPoints.length; i++) {
+    let corner = calibrationPoints[i];
+    let screenPos = cameraPointToScreen(corner, defaultCorners[i]);
+
+    if (corner.locked) {
+      fill(0, 255, 0, 180);
+      noStroke();
+      ellipse(screenPos.x, screenPos.y, 18, 18);
+    } else {
+      noFill();
+      stroke(0, 255, 0, 180);
+      strokeWeight(2);
+      ellipse(screenPos.x, screenPos.y, 14, 14);
+    }
+  }
+
+  let selected = calibrationPoints[selectedCalibrationCorner];
+  let fallback = laserFound
+    ? { x: smoothLaserX, y: smoothLaserY }
+    : defaultCorners[selectedCalibrationCorner];
+
+  let preview = cameraPointToScreen(selected, fallback);
+
+  stroke(0, 255, 0);
+  strokeWeight(4);
+  noFill();
+  ellipse(preview.x, preview.y, 40, 40);
+
+  fill(0, 255, 0, 80);
+  noStroke();
+  ellipse(preview.x, preview.y, 20, 20);
+
+  pop();
+}
+
+function drawCalibratedZone() {
+  let allLocked = calibrationPoints.every((p) => p.locked && p.x !== null && p.y !== null);
+  if (!allLocked) return;
+
+  push();
+
+  stroke(0, 255, 0, 220);
+  strokeWeight(4);
+  noFill();
+
+  beginShape();
+  for (let p of calibrationPoints) {
+    let screen = cameraPointToScreen(p);
+    vertex(screen.x, screen.y);
+  }
+  endShape(CLOSE);
+
+  fill(0, 255, 0, 16);
+  noStroke();
+
+  beginShape();
+  for (let p of calibrationPoints) {
+    let screen = cameraPointToScreen(p);
+    vertex(screen.x, screen.y);
+  }
+  endShape(CLOSE);
+
+  pop();
+}
+
+function drawCalibrationGuide() {
+  push();
+
+  fill(255, 255, 0);
+  noStroke();
+  textSize(18);
+  text("CALIBRATION", 24, 44);
+  text(calibrationMessage, 24, 70);
+
+  let defaultCorners = getDefaultScreenCorners();
+  let currentPoint = calibrationPoints[selectedCalibrationCorner];
+
+  let fallback = laserFound
+    ? { x: smoothLaserX, y: smoothLaserY }
+    : defaultCorners[selectedCalibrationCorner];
+
+  let preview = cameraPointToScreen(currentPoint, fallback);
+
+  stroke(0, 255, 0);
+  strokeWeight(3);
+  noFill();
+  ellipse(preview.x, preview.y, 40, 40);
+
+  fill(0, 255, 0, 120);
+  noStroke();
+  ellipse(preview.x, preview.y, 18, 18);
+
+  for (let i = 0; i < calibrationPoints.length; i++) {
+    let p = calibrationPoints[i];
+
+    if (p.x !== null && p.y !== null) {
+      let screen = cameraPointToScreen(p);
+
+      if (p.locked) {
+        stroke(255);
+        strokeWeight(2);
+        fill(0, 255, 0, 220);
+        ellipse(screen.x, screen.y, 22, 22);
+      } else {
+        noStroke();
+        fill(255, 255, 0, 220);
+        ellipse(screen.x, screen.y, 14, 14);
+      }
+
+      fill(0);
+      noStroke();
+      textSize(14);
+      textAlign(CENTER, CENTER);
+      text("P" + (i + 1), screen.x, screen.y);
+    }
+  }
+
+  pop();
+}
+
+function getDefaultScreenCorners() {
+  return [
+    { x: 40, y: 40 },
+    { x: width - 40, y: 40 },
+    { x: width - 40, y: height - 40 },
+    { x: 40, y: height - 40 }
+  ];
+}
+
+function cameraPointToScreen(point, fallback = null) {
+  if (point && point.x !== null && point.y !== null && cam && cam.width > 0 && cam.height > 0) {
+    return {
+      x: map(point.x, 0, cam.width, 0, width),
+      y: map(point.y, 0, cam.height, 0, height)
+    };
+  }
+
+  return fallback || { x: 0, y: 0 };
 }
 
 function detectRedLaser() {
   cam.loadPixels();
+
+  if (!cam.pixels || cam.pixels.length === 0) {
+    laserFound = false;
+    detectedPixels = 0;
+    return;
+  }
+
+  debugBestR = 0;
+  debugBestG = 0;
+  debugBestB = 0;
+  debugBestBrightness = 0;
+  debugBestScore = -999999;
 
   let bestScore = -1;
   let bestX = -1;
   let bestY = -1;
   let detectedCount = 0;
 
-  for (let y = roiY; y < roiY + roiH; y += 2) {
-    for (let x = roiX; x < roiX + roiW; x += 2) {
+  let yEnd = min(roiY + roiH, cam.height);
+  let xEnd = min(roiX + roiW, cam.width);
+
+  for (let y = roiY; y < yEnd; y += 2) {
+    for (let x = roiX; x < xEnd; x += 2) {
+      if (useCalibrationPolygon && !calibrationMode && homography && !pointInCalibrationPolygon(x, y)) {
+        continue;
+      }
+
       let i = (x + y * cam.width) * 4;
 
       let r = cam.pixels[i];
@@ -161,13 +383,25 @@ function detectRedLaser() {
       let b = cam.pixels[i + 2];
       let brightness = (r + g + b) / 3;
 
+      let redDominance = r - max(g, b);
+      let pinkDominance = r + b - g * 1.35;
+      let hotPink = r > 110 && b > 70 && g < 235 && pinkDominance > 70;
+      let redHotspot = r > 110 && r >= g - 10 && r >= b - 35;
+      let whiteCore = brightness > 115 && r > 100 && r >= g - 15 && b >= g - 40;
+      let candidateScore = r * 1.4 + b * 0.8 - g * 0.7 + brightness;
+
+      if (candidateScore > debugBestScore) {
+        debugBestScore = candidateScore;
+        debugBestR = r;
+        debugBestG = g;
+        debugBestB = b;
+        debugBestBrightness = brightness;
+      }
+
       let isLaser =
+        brightness > minBrightness &&
         r > minRed &&
-        g < maxGreen &&
-        b < maxBlue &&
-        r > g + minRedDominance &&
-        r > b + minRedDominance &&
-        brightness > minBrightness;
+        (hotPink || redHotspot || whiteCore || redDominance > minRedDominance);
 
       if (isLaser) {
         detectedCount++;
@@ -175,8 +409,8 @@ function detectRedLaser() {
         let score =
           r * 2.0 +
           (r - g) * 1.2 +
-          (r - b) * 1.2 -
-          (g + b) * 0.3;
+          (r - b) * 0.4 +
+          brightness * 0.8;
 
         if (score > bestScore) {
           bestScore = score;
@@ -187,16 +421,23 @@ function detectRedLaser() {
     }
   }
 
-  if (bestX >= 0 && detectedCount > 0 && detectedCount < 500) {
+  detectedPixels = detectedCount;
+
+  if (bestX >= 0 && detectedCount > 0) {
+    currentCameraLaserX = bestX;
+    currentCameraLaserY = bestY;
+
     prevRawLaserX = rawLaserX;
     prevRawLaserY = rawLaserY;
 
-    rawLaserX = map(bestX, 0, cam.width, 0, width);
-    rawLaserY = map(bestY, 0, cam.height, 0, height);
+    let mappedPoint = mapCameraToCanvas(bestX, bestY, !calibrationMode);
+
+    rawLaserX = mappedPoint.x;
+    rawLaserY = mappedPoint.y;
 
     let jump = dist(rawLaserX, rawLaserY, prevRawLaserX, prevRawLaserY);
 
-    if (laserFound && jump > 180) {
+    if (laserFound && jump > 250) {
       rawLaserX = prevRawLaserX;
       rawLaserY = prevRawLaserY;
     }
@@ -215,6 +456,202 @@ function detectRedLaser() {
   } else {
     laserFound = false;
     laserSpeed *= 0.8;
+  }
+}
+
+function mapCameraToCanvas(cameraX, cameraY, useHomography = true) {
+  if (useHomography && homography) {
+    let mapped = applyHomography(cameraX, cameraY, homography);
+
+    if (isValidPoint(mapped)) {
+      return {
+        x: constrain(mapped.x, 0, width),
+        y: constrain(mapped.y, 0, height)
+      };
+    }
+  }
+
+  return {
+    x: map(cameraX, 0, cam.width, 0, width),
+    y: map(cameraY, 0, cam.height, 0, height)
+  };
+}
+
+function isValidPoint(p) {
+  return p && isFinite(p.x) && isFinite(p.y);
+}
+
+function applyHomography(x, y, h) {
+  let denom = h[6] * x + h[7] * y + 1;
+
+  if (abs(denom) < 0.0000001) {
+    return null;
+  }
+
+  return {
+    x: (h[0] * x + h[1] * y + h[2]) / denom,
+    y: (h[3] * x + h[4] * y + h[5]) / denom
+  };
+}
+
+function computeHomography(srcPoints, dstPoints) {
+  let A = [];
+  let b = [];
+
+  for (let i = 0; i < 4; i++) {
+    let sx = srcPoints[i].x;
+    let sy = srcPoints[i].y;
+    let dx = dstPoints[i].x;
+    let dy = dstPoints[i].y;
+
+    A.push([sx, sy, 1, 0, 0, 0, -dx * sx, -dx * sy]);
+    b.push(dx);
+
+    A.push([0, 0, 0, sx, sy, 1, -dy * sx, -dy * sy]);
+    b.push(dy);
+  }
+
+  return solveLinearSystem(A, b);
+}
+
+function solveLinearSystem(A, b) {
+  let n = A.length;
+  let M = A.map((row, i) => [...row, b[i]]);
+
+  for (let col = 0; col < n; col++) {
+    let pivot = col;
+
+    while (pivot < n && abs(M[pivot][col]) < 0.0000000001) {
+      pivot++;
+    }
+
+    if (pivot === n) {
+      continue;
+    }
+
+    if (pivot !== col) {
+      let tmp = M[col];
+      M[col] = M[pivot];
+      M[pivot] = tmp;
+    }
+
+    let pivotValue = M[col][col];
+
+    for (let c = col; c <= n; c++) {
+      M[col][c] /= pivotValue;
+    }
+
+    for (let r = 0; r < n; r++) {
+      if (r === col) continue;
+
+      let factor = M[r][col];
+      if (abs(factor) < 0.0000000001) continue;
+
+      for (let c = col; c <= n; c++) {
+        M[r][c] -= factor * M[col][c];
+      }
+    }
+  }
+
+  let solution = [];
+
+  for (let i = 0; i < n; i++) {
+    solution.push(M[i][n]);
+  }
+
+  return solution;
+}
+
+function orderCalibrationPoints(points) {
+  let validPoints = points.filter((p) => p.x !== null && p.y !== null);
+  if (validPoints.length !== 4) return points;
+
+  let sortedByY = [...validPoints].sort((a, b) => a.y - b.y);
+  let top = sortedByY.slice(0, 2).sort((a, b) => a.x - b.x);
+  let bottom = sortedByY.slice(2, 4).sort((a, b) => a.x - b.x);
+
+  return [
+    { ...top[0], locked: true },
+    { ...top[1], locked: true },
+    { ...bottom[1], locked: true },
+    { ...bottom[0], locked: true }
+  ];
+}
+
+function updateDetectionROIFromCalibration() {
+  let xs = calibrationPoints.map((p) => p.x);
+  let ys = calibrationPoints.map((p) => p.y);
+  let margin = 12;
+
+  let left = floor(min(xs) - margin);
+  let right = ceil(max(xs) + margin);
+  let top = floor(min(ys) - margin);
+  let bottom = ceil(max(ys) + margin);
+
+  roiX = constrain(left, 0, cam.width - 1);
+  roiY = constrain(top, 0, cam.height - 1);
+  roiW = constrain(right - roiX, 1, cam.width - roiX);
+  roiH = constrain(bottom - roiY, 1, cam.height - roiY);
+}
+
+function pointInCalibrationPolygon(x, y) {
+  let inside = false;
+  let pts = calibrationPoints;
+
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    let xi = pts[i].x;
+    let yi = pts[i].y;
+    let xj = pts[j].x;
+    let yj = pts[j].y;
+
+    let intersect =
+      ((yi > y) !== (yj > y)) &&
+      (x < ((xj - xi) * (y - yi)) / (yj - yi + 0.000001) + xi);
+
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
+}
+
+function registerCalibrationPoint(cameraX, cameraY) {
+  if (!calibrationMode) return;
+
+  let point = calibrationPoints[selectedCalibrationCorner];
+
+  if (cameraX !== undefined && cameraY !== undefined) {
+    point.x = constrain(cameraX, 0, cam.width);
+    point.y = constrain(cameraY, 0, cam.height);
+  } else if (point.x === null || point.y === null) {
+    calibrationMessage = "Aucune position disponible pour valider ce coin.";
+    return;
+  }
+
+  point.locked = true;
+
+  if (selectedCalibrationCorner < 3) {
+    selectedCalibrationCorner++;
+    calibrationMessage = "Coin " + (selectedCalibrationCorner + 1) + " pret. Ajustez-le avec les fleches puis Espace.";
+  } else {
+    calibrationPoints = orderCalibrationPoints(calibrationPoints);
+    let srcPoints = calibrationPoints.map((p) => ({ x: p.x, y: p.y }));
+
+    let dstPoints = [
+      { x: 0, y: 0 },
+      { x: width, y: 0 },
+      { x: width, y: height },
+      { x: 0, y: height }
+    ];
+
+    homography = computeHomography(srcPoints, dstPoints);
+    updateDetectionROIFromCalibration();
+
+    calibrationMode = false;
+    useCalibrationPolygon = true;
+    calibrationMessage = "Calibrage termine. Detection et dessin limites a la zone.";
+    laserFound = false;
+    paintLayer.clear();
+    resetBrushStroke();
   }
 }
 
@@ -266,12 +703,13 @@ function updateBrushPaintingLaser() {
   if (brushR < 1.2) brushR = 1.2;
   if (brushR > brushSize) brushR = brushSize;
 
+  lastPaintTime = millis();
+
   paintLayer.drawingContext.shadowBlur = glowBlur;
   paintLayer.drawingContext.shadowColor = "rgba(255,255,255,1)";
   paintLayer.stroke(255, 255, 255, glowAlpha);
   paintLayer.noFill();
 
-  // Plus élevé = trait plus continu, moins pointillé.
   let distanceSteps = 18;
 
   for (let i = 0; i < distanceSteps; i++) {
@@ -303,7 +741,7 @@ function updateBrushPaintingLaser() {
     );
 
     if (random(1) < dripChance && laserSpeed < 55) {
-     graffitiDrip(brushX, brushY, oldR);
+      graffitiDrip(brushX, brushY, oldR);
     }
 
     if (random(1) < sprayChance) {
@@ -327,52 +765,15 @@ function graffitiDrip(x, y, sprayWidth) {
 
   let endX = x + random(-3, 3);
   let endY = y + dripLength;
-
-  // Coulure verticale légèrement irrégulière.
   paintLayer.line(x, y, endX, endY);
-
-  // Goutte organique au bout.
-//  drawOrganicDrip(endX, endY, dripWidth);
 
   paintLayer.drawingContext.shadowBlur = 0;
   paintLayer.pop();
 }
 
-function drawOrganicDrip(x, y, w) {
-  paintLayer.push();
-  paintLayer.noStroke();
-
-  // Amas de petites formes imparfaites.
-  for (let i = 0; i < 6; i++) {
-    paintLayer.fill(255, 255, 255, random(75, 165));
-    paintLayer.ellipse(
-      x + random(-w * 0.45, w * 0.45),
-      y + random(-w * 0.25, w * 0.25),
-      w * random(1.1, 2.1),
-      w * random(1.4, 3.0)
-    );
-  }
-
-  // Cœur plus dense, mais pas parfaitement centré.
-  paintLayer.fill(255, 255, 255, random(170, 225));
-  paintLayer.ellipse(
-    x + random(-w * 0.12, w * 0.12),
-    y + random(-w * 0.10, w * 0.10),
-    w * random(0.7, 1.05),
-    w * random(1.0, 1.45)
-  );
-
-  // Petite traînée sous la goutte.
-  paintLayer.stroke(255, 255, 255, random(80, 140));
-  paintLayer.strokeWeight(max(1, w * 0.35));
-  paintLayer.line(x, y, x + random(-1, 1), y + random(4, 10));
-
-  paintLayer.pop();
-}
-
 function graffitiSpray(x, y, sprayWidth) {
-
   sprayWidth = sprayWidth * 2;
+
   let spotX = x + 4.5 * random(-sprayWidth, sprayWidth);
   let spotY = y + 4.5 * random(-sprayWidth, sprayWidth);
   let spotWidth = floor(random(max(1, sprayWidth / 6), max(2, sprayWidth * 0.65)));
@@ -417,18 +818,91 @@ function drawLaserCursor() {
 
 function drawHUD() {
   push();
+
+  drawingContext.shadowBlur = 3;
+  drawingContext.shadowColor = "rgba(0,0,0,0.7)";
+
   noStroke();
   fill(255);
   textSize(16);
+
   text("Laser : " + (laserFound ? "OK" : "non detecte"), 20, 30);
-  text("C = effacer", 20, 55);
-  text("V = webcam on/off", 20, 80);
-  text("H = HUD on/off", 20, 105);
-  text("Z = zone detection on/off", 20, 130);
+  text("Pixels detectes : " + detectedPixels, 20, 50);
+  text("RGB test : " + debugBestR + "," + debugBestG + "," + debugBestB + " / L " + floor(debugBestBrightness), 20, 70);
+  text("Mode : " + (calibrationMode ? "CALIBRATION" : "PEINTURE"), 20, 100);
+  text("P = filtre trapeze " + (useCalibrationPolygon ? "ON" : "OFF"), 20, 130);
+
+  if (calibrationMode) {
+    text("Espace = valider le coin", 20, 110);
+    text("Fleches = ajuster le coin", 20, 140);
+    text("Shift + fleches = ajuster vite", 20, 170);
+  }
+
+  text("C = effacer", 20, 200);
+  text("R = recalibrer", 20, 230);
+  text("H = HUD on/off", 20, 260);
+  text("Z = zone detection on/off", 20, 290);
+  text("V = camera on/off", 20, 320);
+
+  drawingContext.shadowBlur = 0;
   pop();
 }
 
+function mousePressed() {
+  if (calibrationMode && cam && cam.width > 0 && cam.height > 0) {
+    let camX = map(mouseX, 0, width, 0, cam.width);
+    let camY = map(mouseY, 0, height, 0, cam.height);
+    registerCalibrationPoint(camX, camY);
+  }
+}
+
 function keyPressed() {
+  if (key === " " || keyCode === 32) {
+    if (calibrationMode) {
+      let currentPoint = calibrationPoints[selectedCalibrationCorner];
+
+      if (currentPoint.x !== null && currentPoint.y !== null) {
+        registerCalibrationPoint(currentPoint.x, currentPoint.y);
+      } else if (laserFound) {
+        registerCalibrationPoint(currentCameraLaserX, currentCameraLaserY);
+      } else {
+        calibrationMessage = "Laser non detecte : visez le coin et reessayez.";
+      }
+    }
+
+    return;
+  }
+
+  if (
+    calibrationMode &&
+    (keyCode === LEFT_ARROW ||
+      keyCode === RIGHT_ARROW ||
+      keyCode === UP_ARROW ||
+      keyCode === DOWN_ARROW)
+  ) {
+    let delta = keyIsDown(SHIFT) ? 10 : 1;
+    let currentPoint = calibrationPoints[selectedCalibrationCorner];
+
+    if (currentPoint.x === null || currentPoint.y === null) {
+      if (laserFound) {
+        currentPoint.x = currentCameraLaserX;
+        currentPoint.y = currentCameraLaserY;
+      } else {
+        currentPoint.x = selectedCalibrationCorner % 2 === 0 ? 0 : cam.width;
+        currentPoint.y = selectedCalibrationCorner < 2 ? 0 : cam.height;
+      }
+    }
+
+    if (keyCode === LEFT_ARROW) currentPoint.x = constrain(currentPoint.x - delta, 0, cam.width);
+    if (keyCode === RIGHT_ARROW) currentPoint.x = constrain(currentPoint.x + delta, 0, cam.width);
+    if (keyCode === UP_ARROW) currentPoint.y = constrain(currentPoint.y - delta, 0, cam.height);
+    if (keyCode === DOWN_ARROW) currentPoint.y = constrain(currentPoint.y + delta, 0, cam.height);
+
+    currentPoint.locked = false;
+    calibrationMessage = "Ajustez le coin " + (selectedCalibrationCorner + 1) + ", puis appuyez sur Espace pour valider.";
+    return;
+  }
+
   if (key === "c" || key === "C") {
     paintLayer.clear();
   }
@@ -444,6 +918,39 @@ function keyPressed() {
   if (key === "z" || key === "Z") {
     showZone = !showZone;
   }
+
+  if (key === "p" || key === "P") {
+    useCalibrationPolygon = !useCalibrationPolygon;
+  }
+
+  if (key === "r" || key === "R") {
+    resetCalibration();
+  }
+}
+
+function resetCalibration() {
+  calibrationMode = true;
+
+  calibrationPoints = [
+    { x: null, y: null, locked: false },
+    { x: null, y: null, locked: false },
+    { x: null, y: null, locked: false },
+    { x: null, y: null, locked: false }
+  ];
+
+  selectedCalibrationCorner = 0;
+  homography = null;
+
+  roiX = 0;
+  roiY = 0;
+  roiW = cam ? cam.width : 640;
+  roiH = cam ? cam.height : 480;
+
+  calibrationMessage = "Recalibrage : coin 1, visez-le avec le laser puis appuyez sur Espace.";
+
+  laserFound = false;
+  paintLayer.clear();
+  resetBrushStroke();
 }
 
 function windowResized() {
@@ -453,4 +960,21 @@ function windowResized() {
   newLayer.clear();
   newLayer.image(paintLayer, 0, 0, windowWidth, windowHeight);
   paintLayer = newLayer;
+
+  if (homography && calibrationPoints.every((p) => p.locked && p.x !== null && p.y !== null)) {
+    calibrationPoints = orderCalibrationPoints(calibrationPoints);
+    let srcPoints = calibrationPoints.map((p) => ({ x: p.x, y: p.y }));
+
+    let dstPoints = [
+      { x: 0, y: 0 },
+      { x: width, y: 0 },
+      { x: width, y: height },
+      { x: 0, y: height }
+    ];
+
+    homography = computeHomography(srcPoints, dstPoints);
+  }
 }
+
+
+
