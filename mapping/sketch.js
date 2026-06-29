@@ -95,7 +95,7 @@ let calibrationPoints = [
 
 let selectedCalibrationCorner = 0;
 let homography = null;
-let calibrationMessage = "Calibrage : coin 1, visez-le avec le laser puis appuyez sur Espace.";
+let calibrationMessage = "Calibrage : coin 1, placez le point avec la souris puis double-cliquez.";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -224,8 +224,8 @@ function drawCanvasOverlay() {
   }
 
   let selected = calibrationPoints[selectedCalibrationCorner];
-  let fallback = laserFound
-    ? { x: smoothLaserX, y: smoothLaserY }
+  let fallback = calibrationMode
+    ? getMouseScreenPosition()
     : defaultCorners[selectedCalibrationCorner];
 
   let preview = cameraPointToScreen(selected, fallback);
@@ -284,8 +284,8 @@ function drawCalibrationGuide() {
   let defaultCorners = getDefaultScreenCorners();
   let currentPoint = calibrationPoints[selectedCalibrationCorner];
 
-  let fallback = laserFound
-    ? { x: smoothLaserX, y: smoothLaserY }
+  let fallback = calibrationMode
+    ? getMouseScreenPosition()
     : defaultCorners[selectedCalibrationCorner];
 
   let preview = cameraPointToScreen(currentPoint, fallback);
@@ -334,6 +334,13 @@ function getDefaultScreenCorners() {
     { x: width - 40, y: height - 40 },
     { x: 40, y: height - 40 }
   ];
+}
+
+function getMouseScreenPosition() {
+  return {
+    x: constrain(mouseX, 0, width),
+    y: constrain(mouseY, 0, height)
+  };
 }
 
 function cameraPointToScreen(point, fallback = null) {
@@ -631,7 +638,7 @@ function registerCalibrationPoint(cameraX, cameraY) {
 
   if (selectedCalibrationCorner < 3) {
     selectedCalibrationCorner++;
-    calibrationMessage = "Coin " + (selectedCalibrationCorner + 1) + " pret. Ajustez-le avec les fleches puis Espace.";
+    calibrationMessage = "Coin " + (selectedCalibrationCorner + 1) + " : placez avec la souris puis double-cliquez.";
   } else {
     calibrationPoints = orderCalibrationPoints(calibrationPoints);
     let srcPoints = calibrationPoints.map((p) => ({ x: p.x, y: p.y }));
@@ -653,6 +660,30 @@ function registerCalibrationPoint(cameraX, cameraY) {
     paintLayer.clear();
     resetBrushStroke();
   }
+}
+
+function mouseToCameraPoint() {
+  if (!cam || cam.width <= 0 || cam.height <= 0) return null;
+
+  return {
+    x: constrain(map(mouseX, 0, width, 0, cam.width), 0, cam.width),
+    y: constrain(map(mouseY, 0, height, 0, cam.height), 0, cam.height)
+  };
+}
+
+function setCurrentCalibrationPointFromMouse() {
+  if (!calibrationMode) return false;
+
+  let mousePoint = mouseToCameraPoint();
+  if (!mousePoint) return false;
+
+  let point = calibrationPoints[selectedCalibrationCorner];
+  point.x = mousePoint.x;
+  point.y = mousePoint.y;
+  point.locked = false;
+
+  calibrationMessage = "Coin " + (selectedCalibrationCorner + 1) + " place. Double-cliquez pour confirmer.";
+  return true;
 }
 
 function resetBrushStroke() {
@@ -833,26 +864,47 @@ function drawHUD() {
   text("P = filtre trapeze " + (useCalibrationPolygon ? "ON" : "OFF"), 20, 130);
 
   if (calibrationMode) {
-    text("Espace = valider le coin", 20, 110);
-    text("Fleches = ajuster le coin", 20, 140);
-    text("Shift + fleches = ajuster vite", 20, 170);
+    text("Souris = placer le coin", 20, 160);
+    text("Double-clic = confirmer", 20, 190);
+    text("Espace = confirmer aussi", 20, 220);
   }
 
-  text("C = effacer", 20, 200);
-  text("R = recalibrer", 20, 230);
-  text("H = HUD on/off", 20, 260);
-  text("Z = zone detection on/off", 20, 290);
-  text("V = camera on/off", 20, 320);
+  let controlsY = calibrationMode ? 260 : 200;
+  text("C = effacer", 20, controlsY);
+  text("R = recalibrer", 20, controlsY + 30);
+  text("H = HUD on/off", 20, controlsY + 60);
+  text("Z = zone detection on/off", 20, controlsY + 90);
+  text("V = camera on/off", 20, controlsY + 120);
 
   drawingContext.shadowBlur = 0;
   pop();
 }
 
 function mousePressed() {
-  if (calibrationMode && cam && cam.width > 0 && cam.height > 0) {
-    let camX = map(mouseX, 0, width, 0, cam.width);
-    let camY = map(mouseY, 0, height, 0, cam.height);
-    registerCalibrationPoint(camX, camY);
+  if (calibrationMode) {
+    setCurrentCalibrationPointFromMouse();
+    return false;
+  }
+}
+
+function mouseMoved() {
+  if (calibrationMode) {
+    setCurrentCalibrationPointFromMouse();
+  }
+}
+
+function mouseDragged() {
+  if (calibrationMode) {
+    setCurrentCalibrationPointFromMouse();
+    return false;
+  }
+}
+
+function doubleClicked() {
+  if (calibrationMode && setCurrentCalibrationPointFromMouse()) {
+    let currentPoint = calibrationPoints[selectedCalibrationCorner];
+    registerCalibrationPoint(currentPoint.x, currentPoint.y);
+    return false;
   }
 }
 
@@ -863,10 +915,11 @@ function keyPressed() {
 
       if (currentPoint.x !== null && currentPoint.y !== null) {
         registerCalibrationPoint(currentPoint.x, currentPoint.y);
-      } else if (laserFound) {
-        registerCalibrationPoint(currentCameraLaserX, currentCameraLaserY);
+      } else if (setCurrentCalibrationPointFromMouse()) {
+        currentPoint = calibrationPoints[selectedCalibrationCorner];
+        registerCalibrationPoint(currentPoint.x, currentPoint.y);
       } else {
-        calibrationMessage = "Laser non detecte : visez le coin et reessayez.";
+        calibrationMessage = "Placez le coin avec la souris, puis double-cliquez.";
       }
     }
 
@@ -899,7 +952,7 @@ function keyPressed() {
     if (keyCode === DOWN_ARROW) currentPoint.y = constrain(currentPoint.y + delta, 0, cam.height);
 
     currentPoint.locked = false;
-    calibrationMessage = "Ajustez le coin " + (selectedCalibrationCorner + 1) + ", puis appuyez sur Espace pour valider.";
+    calibrationMessage = "Ajustez le coin " + (selectedCalibrationCorner + 1) + ", puis double-cliquez pour valider.";
     return;
   }
 
@@ -946,7 +999,7 @@ function resetCalibration() {
   roiW = cam ? cam.width : 640;
   roiH = cam ? cam.height : 480;
 
-  calibrationMessage = "Recalibrage : coin 1, visez-le avec le laser puis appuyez sur Espace.";
+  calibrationMessage = "Recalibrage : coin 1, placez le point avec la souris puis double-cliquez.";
 
   laserFound = false;
   paintLayer.clear();
